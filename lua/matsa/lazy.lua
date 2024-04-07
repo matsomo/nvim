@@ -1,3 +1,4 @@
+
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not (vim.uv or vim.loop).fs_stat(lazypath) then
   vim.fn.system({
@@ -11,7 +12,12 @@ if not (vim.uv or vim.loop).fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 
-require("lazy").setup({
-  spec = "matsa.lazy",
-  change_detection = { notify = false }
-})
+require("lazy").setup({ { import = "matsa.plugins" }, { import = "matsa.plugins.lsp"} }, {
+  checker = {
+    enabled = true,
+    notify = false,
+  },
+  change_detection = {
+    notify = false,
+  }
+});
