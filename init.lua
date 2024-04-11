@@ -1,1 +1,2 @@
-require("matsa")
+require("matsa.core")
+require("matsa.lazy")
