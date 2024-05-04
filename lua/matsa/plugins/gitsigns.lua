@@ -10,9 +10,9 @@ return {
 			end
 
 			-- Color overrides
-			local fg_git_add = "#41a6b5"
-			local fg_git_change = "#565f89"
-			local fg_git_delete = "#ff007c"
+			local fg_git_add = "#c3e88d"
+			local fg_git_change = "#ff9e64"
+			local fg_git_delete = "#c53b53"
 
 			vim.api.nvim_set_hl(0, "GitSignsAdd", { fg = fg_git_add })
 			vim.api.nvim_set_hl(0, "GitSignsChange", { fg = fg_git_change })

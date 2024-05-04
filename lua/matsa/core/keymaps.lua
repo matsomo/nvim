@@ -1,6 +1,6 @@
 vim.g.mapleader = " "
 
-vim.keymap.set("n", "<leader>eo", vim.cmd.Ex, { desc = "Open file explorer" })
+-- vim.keymap.set("n", "<leader>eo", vim.cmd.Ex, { desc = "Open file explorer" })
 vim.keymap.set("n", "<leader>nh", ":nohl<CR>", { desc = "Clear search highlights" })
 vim.keymap.set("i", "<C-c>", "<Esc>", { desc = "Map ctrl + c to Esc" })
 
@@ -25,3 +25,7 @@ vim.keymap.set("n", "<leader>tx", "<cmd>tabclose<CR>", { desc = "Close current t
 vim.keymap.set("n", "<leader>tn", "<cmd>tabn<CR>", { desc = "Go to next tab" })
 vim.keymap.set("n", "<leader>tp", "<cmd>tabp<CR>", { desc = "Go to previous tab" })
 vim.keymap.set("n", "<leader>tf", "<cmd>tabnew %<CR>", { desc = "Open current buffer in new tab" })
+
+-- buffer history
+vim.keymap.set("n", "<leader>bn", ":bn<CR>", { desc = "Go to next buffer in history" })
+vim.keymap.set("n", "<leader>bp", ":bp<CR>", { desc = "Go to previous buffer in history" })
