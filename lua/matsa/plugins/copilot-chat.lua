@@ -12,7 +12,6 @@ return {
 		event = "VeryLazy",
 		keys = {
 			{ "<leader>cp", "<cmd>CopilotChatToggle<cr>", desc = "CopilotChat - Toggle" },
-			{ "<leader>cs", "<cmd>CopilotChatSave<cr>", desc = "CopilotChat - Save to trigger response" },
 		},
 	},
 }

@@ -100,6 +100,20 @@ return {
 					end,
 				})
 			end,
+			["typescript"] = function()
+				-- configure typescript server
+				lspconfig["typescript"].setup({
+					capabilities = capabilities,
+					handlers = {
+						["textDocument/publishDiagnostics"] = vim.lsp.with(vim.lsp.diagnostic.on_publish_diagnostics, {
+							underline = true,
+							virtual_text = false,
+							signs = true,
+							update_in_insert = true,
+						}),
+					},
+				})
+			end,
 			["lua_ls"] = function()
 				-- configure lua server (with special settings)
 				lspconfig["lua_ls"].setup({
