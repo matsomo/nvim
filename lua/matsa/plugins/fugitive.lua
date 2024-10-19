@@ -13,11 +13,11 @@ return {
 			local destination = vim.fn.input("Destination: ", current_file)
 			local current_buf = vim.fn.bufnr("%")
 
-			-- Move the file
-			vim.cmd("G mv " .. current_file .. " " .. destination)
-
 			-- Close the old buffer
 			vim.cmd("bdelete! " .. current_buf)
+
+			-- Move the file
+			vim.cmd("G mv " .. current_file .. " " .. destination)
 
 			-- Open the new file in the same window
 			vim.cmd("edit " .. destination)
