@@ -1,11 +1,12 @@
 return {
 	{
 		"CopilotC-Nvim/CopilotChat.nvim",
-		branch = "canary",
 		dependencies = {
 			{ "github/copilot.vim" },
-			{ "nvim-lua/plenary.nvim" }, -- for curl, log wrapper
+			{ "nvim-lua/plenary.nvim", branch = "master" }, -- for curl, log wrapper
 		},
+		build = "make tiktoken", -- Only on MacOS or Linux
+		branch = "main",
 		opts = {
 			auto_follow_cursor = false,
 			window = {

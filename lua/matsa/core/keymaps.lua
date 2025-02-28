@@ -29,3 +29,6 @@ vim.keymap.set("n", "<leader>tf", "<cmd>tabnew %<CR>", { desc = "Open current bu
 -- buffer history
 vim.keymap.set("n", "<leader>bn", ":bn<CR>", { desc = "Go to next buffer in history" })
 vim.keymap.set("n", "<leader>bp", ":bp<CR>", { desc = "Go to previous buffer in history" })
+
+-- folding
+vim.keymap.set("n", "<leader>z", "zf%", { desc = "Toggle fold with matching brackets" })
