@@ -1,6 +1,6 @@
 return {
 	"nvim-telescope/telescope.nvim",
-	branch = "0.1.x",
+	branch = "master",
 	dependencies = {
 		"nvim-lua/plenary.nvim",
 		{ "nvim-telescope/telescope-fzf-native.nvim", build = "make" },
@@ -10,11 +10,13 @@ return {
 	config = function()
 		local telescope = require("telescope")
 		local actions = require("telescope.actions")
+		local open_with_trouble = require("trouble.sources.telescope").open
 
 		telescope.setup({
 			defaults = {
 				winblend = 30,
 				i = {
+					["<C-t"] = open_with_trouble,
 					["<C-k>"] = actions.move_selection_previous,
 					["<C-j>"] = actions.move_selection_next,
 					["<C-q>"] = actions.send_selected_to_qflist + actions.open_qflist,

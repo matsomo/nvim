@@ -42,3 +42,6 @@ vim.api.nvim_set_keymap("v", "p", "P", { noremap = true, silent = true })
 -- split windows
 vim.opt.splitright = true -- split vertical window to the right
 vim.opt.splitbelow = true -- split horizontal window to the bottom
+
+-- local session options
+vim.o.sessionoptions = "blank,buffers,curdir,folds,help,tabpages,winsize,winpos,terminal,localoptions"
