@@ -45,3 +45,12 @@ vim.opt.splitbelow = true -- split horizontal window to the bottom
 
 -- local session options
 vim.o.sessionoptions = "blank,buffers,curdir,folds,help,tabpages,winsize,winpos,terminal,localoptions"
+
+-- cursor
+vim.opt.virtualedit = "onemore" -- allow cursor to move past the last character
+vim.opt.guicursor =
+	"n:block-NormalCursor,v-c:block-NormalCursor,i-ci:block-DimmedCursor,r-cr-o:block-DimmedCursor,sm:block-NormalCursor"
+vim.cmd([[
+  highlight NormalCursor guifg=black guibg=white
+  highlight DimmedCursor guifg=black guibg=#6ab5f6
+]])
