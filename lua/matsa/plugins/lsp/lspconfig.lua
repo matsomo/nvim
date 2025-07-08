@@ -85,9 +85,10 @@ return {
 					capabilities = capabilities,
 				})
 			end,
-			["typescript"] = function()
+			["ts_ls"] = function()
 				-- configure typescript server
-				lspconfig["typescript"].setup({
+				lspconfig["ts_ls"].setup({
+					root_dir = require("lspconfig.util").root_pattern(".git", "tsconfig.json", "package.json"),
 					capabilities = capabilities,
 					handlers = {
 						["textDocument/publishDiagnostics"] = vim.lsp.with(vim.lsp.diagnostic.on_publish_diagnostics, {
