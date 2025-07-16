@@ -14,19 +14,35 @@ return {
 
 		telescope.setup({
 			defaults = {
+				vimgrep_arguments = {
+					"rg",
+					"--color=never",
+					"--no-heading",
+					"--with-filename",
+					"--line-number",
+					"--column",
+					"--smart-case",
+					"--hidden",
+					"--trim",
+					"--multiline",
+				},
 				winblend = 30,
-				i = {
-					["<C-t"] = open_with_trouble,
-					["<C-k>"] = actions.move_selection_previous,
-					["<C-j>"] = actions.move_selection_next,
-					["<C-q>"] = actions.send_selected_to_qflist + actions.open_qflist,
-					["<C-h>"] = "which_key",
-					["<C>R"] = function(prompt_bufnr)
-						local selection = actions.get_selected_entry(prompt_bufnr)
-						actions.close(prompt_bufnr)
-						local branch_name = selection.value:match("^[^ ]+")
-						vim.cmd("!git checkout " .. branch_name)
-					end,
+				mappings = {
+					i = {
+						["<C-t>"] = open_with_trouble,
+						["<C-k>"] = actions.move_selection_previous,
+						["<C-j>"] = actions.move_selection_next,
+						["<C-q>"] = actions.send_selected_to_qflist + actions.open_qflist,
+						["<C-h>"] = "which_key",
+						["<C>R"] = function(prompt_bufnr)
+							local selection = actions.get_selected_entry(prompt_bufnr)
+							actions.close(prompt_bufnr)
+							local branch_name = selection.value:match("^[^ ]+")
+							vim.cmd("!git checkout " .. branch_name)
+						end,
+						["<S-Up>"] = actions.cycle_history_prev,
+						["<S-Down>"] = actions.cycle_history_next,
+					},
 				},
 			},
 		})
