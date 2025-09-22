@@ -20,6 +20,8 @@ return {
 					normal = "<Esc>",
 				},
 			},
+			save_state = true,
+			clear_chat_on_new_prompt = false,
 		},
 		event = "VeryLazy",
 		keys = {
