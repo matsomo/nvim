@@ -78,6 +78,24 @@ return {
 			{ desc = "Find git branches" }
 		)
 
+		local builtin = require("telescope.builtin")
+
+		local function nextjs_route_grep()
+			builtin.live_grep({
+				prompt_title = "Next.js Route Pattern",
+				on_input_filter_cb = function(prompt)
+					-- Transform all ${...} into \${[^}]+}
+					local pattern = prompt:gsub("%${[^}]+}", "\\${[^}]+}")
+					return { prompt = pattern }
+				end,
+				additional_args = function()
+					return { "--pcre2" }
+				end,
+			})
+		end
+
+		vim.keymap.set("n", "<leader>fp", nextjs_route_grep, { desc = "Grep for Next.js route pattern" })
+
 		-- colors
 		local bg = "#011628"
 		vim.api.nvim_set_hl(0, "TelescopeNormal", { bg = bg })
