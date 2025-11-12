@@ -9,7 +9,7 @@ return {
 		local mason_lspconfig = require("mason-lspconfig")
 		local mason_tool_installer = require("mason-tool-installer")
 
-		-- enable mason and configure icons
+		-- enable mason
 		mason.setup({
 			ui = {
 				icons = {
@@ -17,6 +17,10 @@ return {
 					package_pending = "➜",
 					package_uninstalled = "✗",
 				},
+			},
+			registries = {
+				"github:mason-org/mason-registry",
+				"github:Crashdummyy/mason-registry",
 			},
 		})
 
@@ -30,7 +34,6 @@ return {
 				"cssmodules_ls",
 				"jsonls",
 				"lua_ls",
-				"omnisharp",
 				"gopls",
 			},
 		})
