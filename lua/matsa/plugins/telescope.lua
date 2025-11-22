@@ -27,6 +27,9 @@ return {
 					"--multiline",
 				},
 				winblend = 30,
+				layout_config = {
+					width = 0.95,
+				},
 				mappings = {
 					i = {
 						["<C-t>"] = open_with_trouble,
