@@ -23,7 +23,12 @@ return {
 		strategies = {
 			chat = {
 				name = "copilot",
-				model = "gpt-4.1",
+				model = "GPT-5.1",
+				sources = {
+					buffer = {
+						type = "buffers",
+					},
+				},
 			},
 		},
 		-- NOTE: The log_level is in `opts.opts`
