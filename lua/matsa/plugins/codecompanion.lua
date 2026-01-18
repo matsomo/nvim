@@ -3,7 +3,23 @@ return {
 	dependencies = {
 		"nvim-lua/plenary.nvim",
 		"nvim-treesitter/nvim-treesitter",
+		"ravitemer/mcphub.nvim",
 	},
+	event = "VeryLazy",
+	config = function()
+		require("codecompanion").setup({
+			extensions = {
+				mcphub = {
+					callback = "mcphub.extensions.codecompanion",
+					opts = {
+						make_vars = true,
+						make_slash_commands = true,
+						show_result_in_chat = true,
+					},
+				},
+			},
+		})
+	end,
 	cmd = {
 		"CodeCompanion",
 		"CodeCompanionChat",
@@ -20,13 +36,15 @@ return {
 		},
 	},
 	opts = {
-		strategies = {
+		interactions = {
 			chat = {
-				name = "copilot",
-				model = "GPT-5.1",
-				sources = {
-					buffer = {
-						type = "buffers",
+				adapter = {
+					name = "claude_code",
+					model = "opus",
+					sources = {
+						buffer = {
+							type = "buffers",
+						},
 					},
 				},
 			},

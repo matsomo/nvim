@@ -23,7 +23,7 @@ return {
 		mason_lspconfig.setup({
 			-- list of servers for mason to install
 			ensure_installed = {
-				"ts_query_ls",
+				-- "ts_query_ls",
 				-- "ts_ls",
 				"html",
 				"cssls",
@@ -40,6 +40,7 @@ return {
 				"prettier", -- prettier formatter
 				"stylua", -- lua formatter
 				"eslint_d",
+				"typescript-language-server", -- required for typescript-tools
 			},
 		})
 	end,
