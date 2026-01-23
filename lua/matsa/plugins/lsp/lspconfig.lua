@@ -52,6 +52,7 @@ return {
 			vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = "" })
 		end
 
+		-- disable ts_ls
 		vim.lsp.config("ts_ls", {
 			autostart = false,
 			filetypes = {},
