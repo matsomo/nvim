@@ -33,6 +33,18 @@ return {
 							},
 						},
 					},
+					slash_commands = {
+						image = {
+							opts = {
+								dirs = {
+									os.getenv("HOME") .. "/Desktop",
+									-- Add other directories you want to search:
+									-- os.getenv("HOME") .. "/Downloads",
+									-- os.getenv("HOME") .. "/Pictures",
+								},
+							},
+						},
+					},
 				},
 			},
 			extensions = {

@@ -16,7 +16,7 @@ return {
 			inactive_bg = "#2c3043",
 		}
 
-		local my_lualine_theme = {
+		local theme = {
 			normal = {
 				a = { bg = colors.blue, fg = colors.bg, gui = "bold" },
 				b = { bg = colors.bg, fg = colors.fg },
@@ -52,7 +52,7 @@ return {
 		-- configure lualine with modified theme
 		lualine.setup({
 			options = {
-				theme = my_lualine_theme,
+				theme = theme,
 			},
 			sections = {
 				lualine_c = { { "filename", path = 1 } },
@@ -98,17 +98,6 @@ return {
 						end,
 					},
 				},
-
-				-- lualine_x = {
-				-- 	{
-				-- 		lazy_status.updates,
-				-- 		cond = lazy_status.has_updates,
-				-- 		color = { fg = "#ff9e64" },
-				-- 	},
-				-- 	{ "encoding" },
-				-- 	{ "fileformat" },
-				-- 	{ "filetype" },
-				-- },
 			},
 		})
 	end,
