@@ -43,6 +43,7 @@ return {
 				"vimdoc",
 				"c_sharp",
 				"go",
+				"xml",
 			},
 			incremental_selection = {
 				enable = true,

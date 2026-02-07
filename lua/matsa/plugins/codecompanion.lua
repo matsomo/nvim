@@ -26,7 +26,7 @@ return {
 				chat = {
 					adapter = {
 						name = "claude_code",
-						model = "opus",
+						model = "claude-opus-4-6",
 						sources = {
 							buffer = {
 								type = "buffers",
@@ -67,6 +67,11 @@ return {
 			adapters = {
 				claude_code = function()
 					return require("codecompanion.adapters").extend("claude_code", {
+						commands = {
+							default = {
+								"/usr/bin/claude-code-acp",
+							},
+						},
 						env = {
 							CLAUDE_CODE_OAUTH_TOKEN = os.getenv("CLAUDE_CODE_OAUTH_TOKEN"),
 						},
