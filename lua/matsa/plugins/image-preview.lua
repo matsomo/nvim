@@ -22,6 +22,8 @@ return {
 		editor_only_render_when_focused = true,
 		tmux_show_only_in_active_window = true,
 		hijack_file_patterns = { "*.png", "*.jpg", "*.jpeg", "*.gif", "*.webp", "*.avif" },
+		kitty_method = "normal",
+		kitty_tmux_write_delay = 10,
 	},
 	config = function(_, opts)
 		local image = require("image")

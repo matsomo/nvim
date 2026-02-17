@@ -33,7 +33,7 @@ return {
 				winblend = 30,
 				layout_config = {
 					width = 0.95,
-					preview_width = 0.6,
+					preview_width = 0.4,
 				},
 				mappings = {
 					i = {
