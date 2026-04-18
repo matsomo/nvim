@@ -26,7 +26,7 @@ return {
 				chat = {
 					adapter = {
 						name = "claude_code",
-						model = "claude-opus-4-6",
+						model = "claude-opus-4-7",
 						sources = {
 							buffer = {
 								type = "buffers",
