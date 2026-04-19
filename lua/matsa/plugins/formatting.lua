@@ -5,6 +5,14 @@ return {
 		local conform = require("conform")
 
 		conform.setup({
+			formatters = {
+				csharpier = {
+					append_args = {
+						"--config-path",
+						vim.fn.stdpath("config") .. "/resources/csharpier.yaml",
+					},
+				},
+			},
 			formatters_by_ft = {
 				javascript = { "prettier" },
 				typescript = { "prettier" },
@@ -17,6 +25,7 @@ return {
 				yaml = { "prettier" },
 				-- markdown = { "prettier" },
 				lua = { "stylua" },
+				cs = { "csharpier" },
 			},
 			format_on_save = {
 				lsp_fallback = true,

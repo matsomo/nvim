@@ -1,4 +1,6 @@
 -- vim.g.netrw_liststyle = 3
+vim.env.DOTNET_ROOT = "/opt/dotnet"
+
 vim.opt.relativenumber = true
 vim.opt.number = true
 

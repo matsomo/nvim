@@ -44,6 +44,7 @@ return {
 				"stylua", -- lua formatter
 				"eslint_d",
 				"typescript-language-server", -- required for typescript-tools
+				"csharpier", -- C# formatter
 			},
 		})
 	end,

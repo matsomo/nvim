@@ -9,6 +9,8 @@ return {
 				-- Show files and directories that start with "."
 				show_hidden = true,
 			},
+			-- Enable filesystem watcher for automatic refresh
+			watch_for_changes = true,
 
 			-- keymaps
 			vim.api.nvim_set_keymap("n", "<leader>o", ":Oil<CR>", { desc = "Open oil", noremap = true, silent = true }),
