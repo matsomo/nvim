@@ -26,7 +26,6 @@ return {
 				chat = {
 					adapter = {
 						name = "claude_code",
-						model = "claude-opus-4-7",
 						sources = {
 							buffer = {
 								type = "buffers",
@@ -58,25 +57,30 @@ return {
 						show_result_in_chat = true, -- Show tool results directly in chat buffer
 						format_tool = nil, -- function(tool_name:string, tool: CodeCompanion.Agent.Tool) : string Function to format tool names to show in the chat buffer
 						-- MCP Resources
-						make_vars = true, -- Convert MCP resources to #variables for prompts
+						-- Disabled: CodeCompanion renamed `variables` → `editor_context`
+						-- (commit 42ba80ca) and mcphub.nvim hasn't updated yet.
+						-- Re-enable once upstream ships a fix.
+						make_vars = false, -- Convert MCP resources to #variables for prompts
 						-- MCP Prompts
 						make_slash_commands = true, -- Add MCP prompts as /slash commands
 					},
 				},
 			},
 			adapters = {
-				claude_code = function()
-					return require("codecompanion.adapters").extend("claude_code", {
-						commands = {
-							default = {
-								"/usr/bin/claude-code-acp",
+				acp = {
+					claude_code = function()
+						return require("codecompanion.adapters").extend("claude_code", {
+							commands = {
+								default = {
+									"/usr/bin/claude-code-acp",
+								},
 							},
-						},
-						env = {
-							CLAUDE_CODE_OAUTH_TOKEN = os.getenv("CLAUDE_CODE_OAUTH_TOKEN"),
-						},
-					})
-				end,
+							env = {
+								CLAUDE_CODE_OAUTH_TOKEN = os.getenv("CLAUDE_CODE_OAUTH_TOKEN"),
+							},
+						})
+					end,
+				},
 			},
 		})
 	end,

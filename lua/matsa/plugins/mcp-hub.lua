@@ -17,6 +17,16 @@ return {
 				port_range = { min = 40000, max = 41000 }, -- Port range for workspace hubs
 				get_port = nil, -- Optional function for custom port assignment
 			},
+
+			extensions = {
+				codecompanion = {
+					-- Disabled: CodeCompanion renamed `variables` to `editor_context`
+					-- (commit 42ba80ca) and mcphub.nvim hasn't updated yet — re-enable
+					-- once upstream ships a fix.
+					make_vars = false,
+					make_slash_commands = true,
+				},
+			},
 		})
 		vim.keymap.set("n", "<leader>mh", "<cmd>MCPHub<cr>", { desc = "Toggle MCP Hub view" })
 	end,

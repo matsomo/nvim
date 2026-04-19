@@ -1,58 +1,77 @@
 return {
 	"nvim-treesitter/nvim-treesitter",
-	event = { "BufReadPre", "BufNewFile" },
+	branch = "main",
+	lazy = false,
 	build = ":TSUpdate",
 	dependencies = {
 		"windwp/nvim-ts-autotag",
 	},
 	config = function()
-		-- import nvim-treesitter plugin
-		local treesitter = require("nvim-treesitter.configs")
+		require("nvim-treesitter").setup({
+			install_dir = vim.fn.stdpath("data") .. "/site",
+		})
 
-		-- configure treesitter
-		treesitter.setup({ -- enable syntax highlighting
-			highlight = {
-				enable = true,
-			},
-			-- enable indentation
-			indent = { enable = true },
-			-- enable autotagging (w/ nvim-ts-autotag plugin)
-			autotag = {
-				enable = true,
-			},
-			-- ensure these language parsers are installed
-			ensure_installed = {
-				"json",
-				"jsdoc",
-				"javascript",
-				"typescript",
-				"tsx",
-				"yaml",
-				"html",
-				"css",
-				"markdown",
-				"markdown_inline",
-				"yaml",
-				"bash",
-				"sql",
-				"lua",
-				"vim",
-				"dockerfile",
-				"gitignore",
-				"query",
-				"vimdoc",
-				"c_sharp",
-				"go",
-				"xml",
-			},
-			incremental_selection = {
-				enable = true,
-				keymaps = {
-					init_selection = "<leader>e",
-					node_incremental = "<leader>e",
-					scope_incremental = false,
-					node_decremental = "<bs>",
-				},
+		local parsers = {
+			"bash",
+			"c_sharp",
+			"css",
+			"dockerfile",
+			"gitignore",
+			"go",
+			"html",
+			"javascript",
+			"jsdoc",
+			"json",
+			"lua",
+			"markdown",
+			"markdown_inline",
+			"query",
+			"sql",
+			"tsx",
+			"typescript",
+			"vim",
+			"vimdoc",
+			"xml",
+			"yaml",
+		}
+		require("nvim-treesitter").install(parsers)
+
+		local filetypes = {
+			"bash",
+			"cs",
+			"css",
+			"dockerfile",
+			"gitignore",
+			"go",
+			"help",
+			"html",
+			"javascript",
+			"javascriptreact",
+			"json",
+			"lua",
+			"markdown",
+			"query",
+			"sh",
+			"sql",
+			"typescript",
+			"typescriptreact",
+			"vim",
+			"xml",
+			"yaml",
+		}
+
+		vim.api.nvim_create_autocmd("FileType", {
+			pattern = filetypes,
+			callback = function()
+				pcall(vim.treesitter.start)
+				vim.bo.indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
+			end,
+		})
+
+		require("nvim-ts-autotag").setup({
+			opts = {
+				enable_close = true,
+				enable_rename = true,
 			},
 		})
 	end,
