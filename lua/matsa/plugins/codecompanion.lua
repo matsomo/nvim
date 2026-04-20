@@ -72,7 +72,7 @@ return {
 						return require("codecompanion.adapters").extend("claude_code", {
 							commands = {
 								default = {
-									"/usr/bin/claude-code-acp",
+									"claude-code-acp",
 								},
 							},
 							env = {
