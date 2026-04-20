@@ -2,16 +2,8 @@ return {
 	"nvim-treesitter/nvim-treesitter",
 	branch = "main",
 	lazy = false,
-	build = ":TSUpdate",
-	dependencies = {
-		"windwp/nvim-ts-autotag",
-	},
-	config = function()
-		require("nvim-treesitter").setup({
-			install_dir = vim.fn.stdpath("data") .. "/site",
-		})
-
-		local parsers = {
+	build = function()
+		require("nvim-treesitter").install({
 			"bash",
 			"c_sharp",
 			"css",
@@ -34,8 +26,22 @@ return {
 			"vimdoc",
 			"xml",
 			"yaml",
-		}
-		require("nvim-treesitter").install(parsers)
+		})
+	end,
+	dependencies = {
+		"windwp/nvim-ts-autotag",
+	},
+	config = function()
+		require("nvim-treesitter").setup()
+
+		-- The main branch stores queries under runtime/ which needs to be on the rtp
+		local ts_plugin = vim.api.nvim_get_runtime_file("lua/nvim-treesitter", false)[1]
+		if ts_plugin then
+			local ts_runtime = vim.fn.fnamemodify(ts_plugin, ":h:h") .. "/runtime"
+			if vim.uv.fs_stat(ts_runtime) and not vim.list_contains(vim.opt.rtp:get(), ts_runtime) then
+				vim.opt.rtp:prepend(ts_runtime)
+			end
+		end
 
 		local filetypes = {
 			"bash",
