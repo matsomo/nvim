@@ -40,9 +40,8 @@ return {
 
 		mason_tool_installer.setup({
 			ensure_installed = {
-				"prettier", -- prettier formatter
+				"oxlint",
 				"stylua", -- lua formatter
-				"eslint_d",
 				"typescript-language-server", -- required for typescript-tools
 				"csharpier", -- C# formatter
 			},

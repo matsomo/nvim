@@ -14,16 +14,15 @@ return {
 				},
 			},
 			formatters_by_ft = {
-				javascript = { "prettier" },
-				typescript = { "prettier" },
-				javascriptreact = { "prettier" },
-				typescriptreact = { "prettier" },
-				svelte = { "prettier" },
-				css = { "prettier" },
-				html = { "prettier" },
-				json = { "prettier" },
-				yaml = { "prettier" },
-				-- markdown = { "prettier" },
+				javascript = { "oxfmt" },
+				typescript = { "oxfmt" },
+				javascriptreact = { "oxfmt" },
+				typescriptreact = { "oxfmt" },
+				svelte = { "oxfmt" },
+				css = { "oxfmt" },
+				html = { "oxfmt" },
+				json = { "oxfmt" },
+				yaml = { "oxfmt" },
 				lua = { "stylua" },
 				cs = { "csharpier" },
 			},
@@ -33,34 +32,6 @@ return {
 				timeout_ms = 1000,
 			},
 		})
-
-		-- Custom formatter args
-		require("conform.formatters.prettier").args = function(self, ctx)
-			local prettier_roots = { ".prettierrc", ".prettierrc.json", "prettier.config.js" }
-			local args = { "--stdin-filepath", "$FILENAME" }
-
-			local localPrettierConfig = vim.fs.find(prettier_roots, {
-				upward = true,
-				path = ctx.dirname,
-				type = "file",
-			})[1]
-
-			local globalPrettierConfig = vim.fs.find(prettier_roots, {
-				path = vim.fn.stdpath("config"),
-				type = "file",
-			})[1]
-
-			local disableGlobalPrettierConfig = os.getenv("DISABLE_GLOBAL_PRETTIER_CONFIG")
-
-			-- Project config takes precedence over global config
-			if localPrettierConfig then
-				vim.list_extend(args, { "--config", localPrettierConfig })
-			elseif globalPrettierConfig and not disableGlobalPrettierConfig then
-				vim.list_extend(args, { "--config", globalPrettierConfig })
-			end
-
-			return args
-		end
 
 		vim.keymap.set({ "n", "v" }, "<leader>mp", function()
 			conform.format({
