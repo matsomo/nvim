@@ -71,5 +71,19 @@ return {
 				},
 			},
 		})
+
+		vim.lsp.config("svelte", {
+			capabilities = capabilities,
+			on_attach = function(client, bufnr)
+				vim.api.nvim_create_autocmd("BufWritePost", {
+					pattern = { "*.js", "*.ts" },
+					callback = function(ctx)
+						-- Restart Svelte server when JS/TS files change
+						-- This helps keep Svelte files in sync with component changes
+						client.notify("$/onDidChangeTsOrJsFile", { uri = ctx.match })
+					end,
+				})
+			end,
+		})
 	end,
 }

@@ -18,7 +18,7 @@ return {
 				typescript = { "oxfmt" },
 				javascriptreact = { "oxfmt" },
 				typescriptreact = { "oxfmt" },
-				svelte = { "oxfmt" },
+				svelte = { "prettier" }, -- oxfmt doesn't support Svelte yet
 				css = { "oxfmt" },
 				html = { "oxfmt" },
 				json = { "oxfmt" },

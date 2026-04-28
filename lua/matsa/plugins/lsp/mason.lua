@@ -35,6 +35,7 @@ return {
 				"jsonls",
 				"lua_ls",
 				"gopls",
+				"svelte",
 			},
 		})
 
