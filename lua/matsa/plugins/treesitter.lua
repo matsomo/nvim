@@ -78,8 +78,8 @@ return {
 
 		require("nvim-ts-autotag").setup({
 			opts = {
-				enable_close = true,
-				enable_rename = true,
+				enable_close = false, -- disable automatic tag closing
+				enable_rename = true, -- keep auto-renaming of paired tags
 			},
 		})
 	end,
