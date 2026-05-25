@@ -12,6 +12,16 @@ return {
 						vim.fn.stdpath("config") .. "/resources/csharpier.yaml",
 					},
 				},
+				prettier = {
+					command = vim.fn.stdpath("data") .. "/mason/bin/prettier",
+					prepend_args = {
+						"--plugin",
+						vim.fn.stdpath("data") .. "/mason/packages/prettier/node_modules/prettier-plugin-svelte/plugin.js",
+					},
+				},
+				oxfmt = {
+					command = vim.fn.expand("~/.vite-plus/bin/oxfmt"),
+				},
 			},
 			formatters_by_ft = {
 				javascript = { "oxfmt" },
