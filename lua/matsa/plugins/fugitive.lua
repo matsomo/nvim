@@ -30,5 +30,25 @@ return {
 			":lua GRename()<CR>",
 			{ noremap = true, silent = true, desc = "Rename file" }
 		)
+
+		-- In fugitive buffers, open the whole commit in diffview (file panel +
+		-- side-by-side diffs): uses the hash under the cursor, or the commit
+		-- the buffer itself displays
+		vim.api.nvim_create_autocmd("FileType", {
+			pattern = { "git", "fugitive" },
+			callback = function(ev)
+				vim.keymap.set("n", "dt", function()
+					local hash = vim.fn.expand("<cword>")
+					if not hash:match("^%x%x%x%x%x%x%x+$") then
+						hash = vim.api.nvim_buf_get_name(ev.buf):match("//(%x+)$") or ""
+					end
+					if hash == "" then
+						vim.notify("No commit under cursor", vim.log.levels.WARN)
+						return
+					end
+					vim.cmd("DiffviewOpen " .. hash .. "^!")
+				end, { buffer = ev.buf, desc = "Diffview commit (side-by-side diffs)" })
+			end,
+		})
 	end,
 }
