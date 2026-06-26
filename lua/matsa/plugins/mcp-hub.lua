@@ -3,7 +3,12 @@ return {
 	dependencies = {
 		"nvim-lua/plenary.nvim",
 	},
-
+	-- loaded on demand: via :MCPHub/<leader>mh, or as a codecompanion dependency
+	lazy = true,
+	cmd = "MCPHub",
+	keys = {
+		{ "<leader>mh", "<cmd>MCPHub<cr>", desc = "Toggle MCP Hub view" },
+	},
 	build = "npm install -g mcp-hub@latest", -- Installs `mcp-hub` node binary globally everytime the plugin is updated
 	config = function()
 		require("mcphub").setup({
@@ -28,6 +33,5 @@ return {
 				},
 			},
 		})
-		vim.keymap.set("n", "<leader>mh", "<cmd>MCPHub<cr>", { desc = "Toggle MCP Hub view" })
 	end,
 }

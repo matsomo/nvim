@@ -4,6 +4,11 @@ return {
 	dependencies = {
 		"nvim-telescope/telescope.nvim",
 	},
+	cmd = { "MarkdownEditorToggle", "MarkdownEditorOpen", "MarkdownEditorClose" },
+	keys = {
+		{ "<leader>me", desc = "Toggle Markdown Editor" },
+		{ "<leader>mf", desc = "Insert file path (Markdown Editor)" },
+	},
 	config = function()
 		local markdown_editor = require("markdown-editor")
 

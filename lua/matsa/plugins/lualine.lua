@@ -3,7 +3,6 @@ return {
 	dependencies = { "nvim-tree/nvim-web-devicons" },
 	config = function()
 		local lualine = require("lualine")
-		-- local lazy_status = require("lazy.status") -- to configure lazy pending updates count
 
 		local colors = {
 			blue = "#65D1FF",
@@ -14,6 +13,7 @@ return {
 			fg = "#c3ccdc",
 			bg = "#112638",
 			inactive_bg = "#2c3043",
+			semilightgray = "#7b97b0",
 		}
 
 		local theme = {
@@ -61,7 +61,7 @@ return {
 						function()
 							-- Check if MCPHub is loaded
 							if not vim.g.loaded_mcphub then
-								return "MCPHub loaded"
+								return "MCPHub not loaded"
 							end
 
 							local count = vim.g.mcphub_servers_count or 0

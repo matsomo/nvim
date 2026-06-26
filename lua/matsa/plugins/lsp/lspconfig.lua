@@ -4,9 +4,31 @@ return {
 	dependencies = {
 		"hrsh7th/cmp-nvim-lsp",
 		{ "antosha417/nvim-lsp-file-operations", config = true },
-		{ "folke/neodev.nvim", opts = {} },
+		{ "folke/lazydev.nvim", ft = "lua", opts = {} },
 	},
 	config = function()
+		-- Never start/reuse an LSP client for buffers that aren't real files.
+		-- Neovim's built-in auto-attach only guards by buftype, so plugins that
+		-- expose a real filetype in a non-file buffer with an empty buftype
+		-- (e.g. diffview's `diffview://...:0:/...` index buffers) slip through.
+		-- Servers then resolve a bogus root from the synthetic path and some
+		-- reject `initialize` with `file://.` (InvalidParams). Gating at
+		-- vim.lsp.start covers both fresh starts and client reuse, and can't be
+		-- overridden by a server's own root_dir.
+		if not vim.g._lsp_start_file_only then
+			vim.g._lsp_start_file_only = true
+			local orig_start = vim.lsp.start
+			vim.lsp.start = function(config, opts)
+				opts = opts or {}
+				local bufnr = opts.bufnr or vim.api.nvim_get_current_buf()
+				local scheme = vim.api.nvim_buf_get_name(bufnr):match("^(%w[%w+.-]*)://")
+				if scheme and scheme ~= "file" then
+					return nil
+				end
+				return orig_start(config, opts)
+			end
+		end
+
 		-- import cmp-nvim-lsp plugin
 		local cmp_nvim_lsp = require("cmp_nvim_lsp")
 
@@ -34,9 +56,13 @@ return {
 				opts.desc = "Show line diagnostics"
 				keymap.set("n", "<leader>d", vim.diagnostic.open_float, opts)
 				opts.desc = "Go to previous diagnostic"
-				keymap.set("n", "[d", vim.diagnostic.goto_prev, opts)
+				keymap.set("n", "[d", function()
+					vim.diagnostic.jump({ count = -1 })
+				end, opts)
 				opts.desc = "Go to next diagnostic"
-				keymap.set("n", "]d", vim.diagnostic.goto_next, opts)
+				keymap.set("n", "]d", function()
+					vim.diagnostic.jump({ count = 1 })
+				end, opts)
 				opts.desc = "Show documentation for what is under cursor"
 				keymap.set("n", "K", vim.lsp.buf.hover, opts)
 				opts.desc = "Restart LSP"
@@ -45,12 +71,6 @@ return {
 		})
 
 		local capabilities = cmp_nvim_lsp.default_capabilities()
-
-		local signs = { Error = " ", Warn = " ", Hint = "󰠠 ", Info = " " }
-		for type, icon in pairs(signs) do
-			local hl = "DiagnosticSign" .. type
-			vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = "" })
-		end
 
 		-- disable ts_ls
 		vim.lsp.config("ts_ls", {

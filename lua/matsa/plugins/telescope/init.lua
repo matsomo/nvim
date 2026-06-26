@@ -1,6 +1,7 @@
 return {
 	"nvim-telescope/telescope.nvim",
 	branch = "master",
+	event = "VeryLazy",
 	dependencies = {
 		"nvim-lua/plenary.nvim",
 		{ "nvim-telescope/telescope-fzf-native.nvim", build = "make" },
@@ -42,12 +43,6 @@ return {
 						["<C-j>"] = actions.move_selection_next,
 						["<C-q>"] = actions.send_selected_to_qflist + actions.open_qflist,
 						["<C-h>"] = "which_key",
-						["<C>R"] = function(prompt_bufnr)
-							local selection = actions.get_selected_entry(prompt_bufnr)
-							actions.close(prompt_bufnr)
-							local branch_name = selection.value:match("^[^ ]+")
-							vim.cmd("!git checkout " .. branch_name)
-						end,
 						["<S-Up>"] = actions.cycle_history_prev,
 						["<S-Down>"] = actions.cycle_history_next,
 					},

@@ -4,6 +4,7 @@ return {
 		"nvim-lua/plenary.nvim",
 		"nvim-treesitter/nvim-treesitter",
 		"ravitemer/mcphub.nvim",
+		"echasnovski/mini.diff",
 	},
 	event = "VeryLazy",
 	keys = {
@@ -16,7 +17,6 @@ return {
 	},
 	config = function()
 		require("codecompanion").setup({
-			log_level = "DEBUG",
 			display = {
 				chat = {
 					show_token_count = true,

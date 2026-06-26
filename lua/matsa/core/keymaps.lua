@@ -2,8 +2,8 @@ vim.g.mapleader = " "
 
 vim.keymap.set("n", "<leader>nh", ":nohl<CR>", { desc = "Clear search highlights" })
 
-vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv", { desc = "Move current line up one line" })
-vim.keymap.set("v", "K", ":m '<-2<CR>gv=gv", { desc = "Move current line down one line" })
+vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv", { desc = "Move selected lines down" })
+vim.keymap.set("v", "K", ":m '<-2<CR>gv=gv", { desc = "Move selected lines up" })
 
 -- file navigation
 vim.keymap.set("n", "<C-d>", "<C-d>zz", { desc = "Jump half a page up and center vertically" })

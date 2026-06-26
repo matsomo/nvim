@@ -1,15 +1,11 @@
--- Close nvim-tree if it's open
-vim.api.nvim_exec(
-	[[
-  autocmd VimEnter * if &modifiable && exists(':NvimTreeClose') | NvimTreeClose | endif
-]],
-	false
-)
-
 -- Open fugitive status page on startup
-vim.api.nvim_exec(
-	[[
-  autocmd VimEnter * if &modifiable && exists(':G') | G | endif
-]],
-	false
-)
+-- nested: the status buffer is populated via fugitive's BufReadCmd autocmd,
+-- which won't fire from inside another autocmd otherwise
+vim.api.nvim_create_autocmd("VimEnter", {
+	nested = true,
+	callback = function()
+		if vim.bo.modifiable and vim.fn.exists(":G") == 2 then
+			vim.cmd("G")
+		end
+	end,
+})

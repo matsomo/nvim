@@ -1,6 +1,7 @@
 return {
 	"pmizio/typescript-tools.nvim",
 	dependencies = { "nvim-lua/plenary.nvim", "neovim/nvim-lspconfig" },
+	ft = { "typescript", "typescriptreact", "javascript", "javascriptreact", "svelte" },
 	config = function()
 		require("typescript-tools").setup({
 			tsserver_max_ts_server_memory = 4096, -- increase memory if needed

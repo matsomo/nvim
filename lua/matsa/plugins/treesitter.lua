@@ -71,7 +71,13 @@ return {
 		vim.api.nvim_create_autocmd("FileType", {
 			pattern = filetypes,
 			callback = function()
-				pcall(vim.treesitter.start)
+				local ok, err = pcall(vim.treesitter.start)
+				if not ok then
+					vim.notify_once(
+						("treesitter: failed to start for %s: %s"):format(vim.bo.filetype, err),
+						vim.log.levels.WARN
+					)
+				end
 				vim.bo.indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
 			end,
 		})

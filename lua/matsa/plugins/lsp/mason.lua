@@ -1,5 +1,7 @@
 return {
 	"mason-org/mason.nvim",
+	event = { "BufReadPre", "BufNewFile" },
+	cmd = { "Mason", "MasonInstall", "MasonUpdate" },
 	dependencies = {
 		"mason-org/mason-lspconfig.nvim",
 		"WhoIsSethDaniel/mason-tool-installer.nvim",

@@ -52,12 +52,7 @@ function M.setup()
 
 	vim.keymap.set("n", "<leader>ft", "<cmd>TodoTelescope<cr>", { desc = "Find todos" })
 
-	vim.keymap.set(
-		"n",
-		"<leader>fg",
-		"<cmd>Telescope git_branches --sort=comitterdate<cr>",
-		{ desc = "Find git branches" }
-	)
+	vim.keymap.set("n", "<leader>fg", "<cmd>Telescope git_branches<cr>", { desc = "Find git branches" })
 
 	-- Next.js route pattern grep
 	vim.keymap.set("n", "<leader>fp", function()

@@ -1,5 +1,9 @@
 return {
 	"HakonHarnes/img-clip.nvim",
+	cmd = { "PasteImage", "ImgClipDebug", "ImgClipConfig" },
+	keys = {
+		{ "<leader>p", "<cmd>PasteImage<cr>", desc = "Paste image from system clipboard" },
+	},
 	opts = {
 		filetypes = {
 			codecompanion = {
@@ -7,9 +11,6 @@ return {
 				template = "[Image]($FILE_PATH)",
 				use_absolute_path = true,
 			},
-		},
-		keys = {
-			{ "<leader>p", "<cmd>PasteImage<cr>", desc = "Paste image from system clipboard" },
 		},
 	},
 }

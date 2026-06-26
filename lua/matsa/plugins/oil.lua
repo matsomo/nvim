@@ -11,9 +11,8 @@ return {
 			},
 			-- Enable filesystem watcher for automatic refresh
 			watch_for_changes = true,
-
-			-- keymaps
-			vim.api.nvim_set_keymap("n", "<leader>o", ":Oil<CR>", { desc = "Open oil", noremap = true, silent = true }),
 		})
+
+		vim.keymap.set("n", "<leader>o", ":Oil<CR>", { desc = "Open oil", silent = true })
 	end,
 }
