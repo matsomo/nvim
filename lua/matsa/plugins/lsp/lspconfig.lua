@@ -42,7 +42,12 @@ return {
 				opts.desc = "Go to declaration"
 				keymap.set("n", "gD", vim.lsp.buf.declaration, opts)
 				opts.desc = "Show LSP definitions"
-				keymap.set("n", "gd", "<cmd>Telescope lsp_definitions<CR>zz", opts)
+				-- Direct LSP jump instead of `Telescope lsp_definitions`: Telescope
+				-- waits for every definition-capable client (cssmodules_ls, etc.)
+				-- to reply before acting, which is noticeably slow with multiple
+				-- clients attached. The direct call jumps as soon as a location is
+				-- available. (scrolloff keeps context around the landing line.)
+				keymap.set("n", "gd", vim.lsp.buf.definition, opts)
 				opts.desc = "Show LSP implementations"
 				keymap.set("n", "gi", "<cmd>Telescope lsp_implementations<CR>", opts)
 				opts.desc = "Show LSP type definitions"

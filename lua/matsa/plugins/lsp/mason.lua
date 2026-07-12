@@ -27,6 +27,12 @@ return {
 		})
 
 		mason_lspconfig.setup({
+			-- Don't auto-enable installed tools that aren't our chosen LSP:
+			-- oxlint/stylua are already run via nvim-lint/conform, and
+			-- omnisharp/csharp_ls duplicate roslyn.nvim for C#.
+			automatic_enable = {
+				exclude = { "oxlint", "stylua", "omnisharp", "csharp_ls" },
+			},
 			-- list of servers for mason to install
 			ensure_installed = {
 				-- "ts_query_ls",
