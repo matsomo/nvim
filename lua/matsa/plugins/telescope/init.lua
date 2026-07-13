@@ -59,11 +59,23 @@ return {
 		-- Setup keymaps
 		keymaps.setup()
 
-		-- Highlight customization
-		local bg = "#011628"
-		vim.api.nvim_set_hl(0, "TelescopeNormal", { bg = bg })
-		vim.api.nvim_set_hl(0, "TelescopeBorder", { bg = bg })
-		vim.api.nvim_set_hl(0, "TelescopePromptNormal", { bg = bg })
-		vim.api.nvim_set_hl(0, "TelescopeResultsNormal", { bg = bg })
+		-- Highlight customization: keep Telescope's floating windows matching the
+		-- active theme's background (borderless look) in both light and dark.
+		-- Re-applied on every colorscheme change so it follows <leader>tt.
+		local function sync_telescope_hl()
+			local normal = vim.api.nvim_get_hl(0, { name = "Normal" })
+			local bg = normal.bg and string.format("#%06x", normal.bg) or "NONE"
+			vim.api.nvim_set_hl(0, "TelescopeNormal", { bg = bg })
+			vim.api.nvim_set_hl(0, "TelescopeBorder", { bg = bg })
+			vim.api.nvim_set_hl(0, "TelescopePromptNormal", { bg = bg })
+			vim.api.nvim_set_hl(0, "TelescopeResultsNormal", { bg = bg })
+			vim.api.nvim_set_hl(0, "TelescopePreviewNormal", { bg = bg })
+		end
+
+		vim.api.nvim_create_autocmd("ColorScheme", {
+			group = vim.api.nvim_create_augroup("TelescopeThemeSync", { clear = true }),
+			callback = sync_telescope_hl,
+		})
+		sync_telescope_hl()
 	end,
 }
