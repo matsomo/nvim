@@ -17,9 +17,19 @@ vim.api.nvim_create_autocmd("VimEnter", {
 			or name:match("^oil://") ~= nil
 			or vim.fn.isdirectory(name) == 1
 
-		vim.cmd("G")
-
-		if is_landing then
+		-- Inside a Git repo, land on fugitive's status page. Outside one, land on
+		-- oil at the current root (`:G` errors outside a repo anyway).
+		if vim.fn.FugitiveGitDir() ~= "" then
+			vim.cmd("G")
+			if is_landing then
+				vim.cmd("only")
+			end
+		elseif is_landing then
+			-- `nvim <dir>` already hijacks into an oil buffer; only open oil
+			-- ourselves for a bare/empty landing buffer.
+			if vim.bo.filetype ~= "oil" then
+				require("oil").open(vim.fn.getcwd())
+			end
 			vim.cmd("only")
 		end
 	end,
