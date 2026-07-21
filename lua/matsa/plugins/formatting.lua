@@ -7,7 +7,14 @@ return {
 		conform.setup({
 			formatters = {
 				csharpier = {
-					append_args = {
+					-- Point straight at the mason binary. conform's default
+					-- probes `dotnet csharpier --version` first, which fails
+					-- slowly (~0.7s) here since there's no dotnet tool installed.
+					command = vim.fn.stdpath("data") .. "/mason/bin/csharpier",
+					-- Explicit args, otherwise conform keeps its bundled `args`
+					-- function which also runs the slow `dotnet` probe.
+					args = {
+						"format",
 						"--config-path",
 						vim.fn.stdpath("config") .. "/resources/csharpier.yaml",
 					},
@@ -40,7 +47,9 @@ return {
 			format_on_save = {
 				lsp_fallback = true,
 				async = false,
-				timeout_ms = 1000,
+				-- csharpier's native binary has a ~1s cold start on the first
+				-- format of a session; 1000ms was too tight and timed out.
+				timeout_ms = 3000,
 			},
 		})
 
