@@ -29,9 +29,11 @@ return {
 		mason_lspconfig.setup({
 			-- Don't auto-enable installed tools that aren't our chosen LSP:
 			-- oxlint/stylua are already run via nvim-lint/conform, and
-			-- omnisharp/csharp_ls duplicate roslyn.nvim for C#.
+			-- omnisharp/csharp_ls/roslyn_ls all duplicate roslyn.nvim for C#.
+			-- (roslyn_ls maps to the roslyn-language-server package we install,
+			-- so mason-lspconfig would otherwise attach a second C# client.)
 			automatic_enable = {
-				exclude = { "oxlint", "stylua", "omnisharp", "csharp_ls" },
+				exclude = { "oxlint", "stylua", "omnisharp", "csharp_ls", "roslyn_ls" },
 			},
 			-- list of servers for mason to install
 			ensure_installed = {
@@ -53,6 +55,10 @@ return {
 				"stylua", -- lua formatter
 				"typescript-language-server", -- required for typescript-tools
 				"csharpier", -- C# formatter
+				-- Roslyn LSP server that roslyn.nvim drives (from the
+				-- Crashdummyy registry). Without it no client attaches to
+				-- .cs buffers, so hover/K silently falls back to `man`.
+				"roslyn-language-server",
 			},
 		})
 	end,
