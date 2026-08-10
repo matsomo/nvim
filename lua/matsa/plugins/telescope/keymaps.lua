@@ -32,6 +32,76 @@ function M.setup()
 		{ desc = "Fuzzy find files cwd (only git files)" }
 	)
 
+	-- Reverse of <leader>ff: files NOT tracked by git (untracked + gitignored),
+	-- e.g. agent docs (.claude/…) and local dev configs (.env, secrets). We list
+	-- files with fd (hidden + ignored), then subtract git-tracked ones. In a
+	-- non-git dir nothing is tracked, so everything shows — the correct meaning
+	-- of "not tracked" there. Heavy build/cache dirs are excluded at the source
+	-- so fd stays fast and results aren't drowned (e.g. .yarn/cache = thousands).
+	vim.keymap.set("n", "<leader>fu", function()
+		-- Dirs excluded everywhere: build output, dependency + tool caches.
+		local exclude = {
+			".git",
+			"node_modules",
+			".next",
+			"dist",
+			"build",
+			"target",
+			"obj",
+			"bin",
+			".venv",
+			".yarn",
+			".turbo",
+			".cache",
+			".nx",
+			"coverage",
+		}
+
+		local fd = { "fd", "--type", "f", "--hidden", "--no-ignore" }
+		for _, e in ipairs(exclude) do
+			table.insert(fd, "--exclude")
+			table.insert(fd, e)
+		end
+
+		local files = vim.fn.systemlist(fd)
+		if vim.v.shell_error ~= 0 then
+			vim.notify("fd failed (is fd installed?)", vim.log.levels.ERROR)
+			return
+		end
+
+		if vim.fn.systemlist({ "git", "rev-parse", "--is-inside-work-tree" })[1] == "true" then
+			local tracked = {}
+			for _, f in ipairs(vim.fn.systemlist({ "git", "ls-files" })) do
+				tracked[f] = true
+			end
+			files = vim.tbl_filter(function(f)
+				return not tracked[f]
+			end, files)
+		end
+
+		if vim.tbl_isempty(files) then
+			vim.notify("No untracked/ignored files found", vim.log.levels.INFO)
+			return
+		end
+
+		local pickers = require("telescope.pickers")
+		local finders = require("telescope.finders")
+		local conf = require("telescope.config").values
+		local make_entry = require("telescope.make_entry")
+
+		pickers
+			.new({}, {
+				prompt_title = "Files not tracked by git",
+				finder = finders.new_table({
+					results = files,
+					entry_maker = make_entry.gen_from_file({}),
+				}),
+				sorter = conf.file_sorter({}),
+				previewer = conf.file_previewer({}),
+			})
+			:find()
+	end, { desc = "Fuzzy find files not tracked by git" })
+
 	vim.keymap.set("n", "<leader>fr", "<cmd>Telescope oldfiles<cr>", { desc = "Fuzzy find recent files" })
 
 	vim.keymap.set("n", "<leader>fs", "<cmd>Telescope live_grep<cr>", { desc = "Find string in cwd" })
