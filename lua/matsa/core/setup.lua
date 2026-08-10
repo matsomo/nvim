@@ -20,9 +20,18 @@ vim.api.nvim_create_autocmd("VimEnter", {
 		-- Inside a Git repo, land on fugitive's status page. Outside one, land on
 		-- oil at the current root (`:G` errors outside a repo anyway).
 		if vim.fn.FugitiveGitDir() ~= "" then
+			local landing_buf = vim.api.nvim_get_current_buf()
 			vim.cmd("G")
 			if is_landing then
 				vim.cmd("only")
+				-- Wipe the hidden landing buffer. Oil populates it asynchronously,
+				-- and once :only closes its window, oil's callback finishes in
+				-- whatever window is current instead - replaying BufReadPost for
+				-- the oil:// URL in the fugitive status buffer, which stomps its
+				-- filetype and wipes the highlighting.
+				if landing_buf ~= vim.api.nvim_get_current_buf() and vim.api.nvim_buf_is_valid(landing_buf) then
+					pcall(vim.api.nvim_buf_delete, landing_buf, { force = true })
+				end
 			end
 		elseif is_landing then
 			-- `nvim <dir>` already hijacks into an oil buffer; only open oil
