@@ -97,6 +97,20 @@ return {
 			},
 		})
 
+		-- SQL (SQLite). Connections live in ~/.config/sqls/config.yml so the
+		-- project's absolute db path stays out of the versioned config.
+		-- No SQL formatting on purpose: every SQL formatter explodes SELECT
+		-- lists/subqueries and can't preserve a compact hand-aligned layout,
+		-- so we disable sqls's formatting capability and keep only completion,
+		-- hover and diagnostics.
+		vim.lsp.config("sqls", {
+			capabilities = capabilities,
+			on_attach = function(client, _)
+				client.server_capabilities.documentFormattingProvider = false
+				client.server_capabilities.documentRangeFormattingProvider = false
+			end,
+		})
+
 		vim.lsp.config("svelte", {
 			capabilities = capabilities,
 			on_attach = function(client, bufnr)

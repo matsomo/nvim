@@ -46,6 +46,7 @@ return {
 				"lua_ls",
 				"gopls",
 				"svelte",
+				"sqls", -- SQL language server (SQLite via ~/.config/sqls/config.yml)
 			},
 		})
 
