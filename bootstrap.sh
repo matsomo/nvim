@@ -228,6 +228,18 @@ else
   echo "  syncing plugins..."
   nvim --headless "+Lazy! sync" +qa 2>&1 | grep -vE '^\s*$' || true
 
+  # `sync` does NOT re-run build steps for plugins that are already cloned.
+  # On a fresh box those builds ran before npm/make/luarocks existed and
+  # failed silently, leaving e.g. telescope-fzf-native without libfzf.so and
+  # mcphub without its binary -- both of which then throw on every startup.
+  # Force them now that the toolchain is in place.
+  echo "  re-running plugin build steps..."
+  for plug in telescope-fzf-native.nvim LuaSnip mcphub.nvim image.nvim; do
+    [[ -d ~/.local/share/nvim/lazy/$plug ]] || continue
+    nvim --headless "+Lazy! build $plug" +qa >/dev/null 2>&1 || \
+      warn "build failed for $plug"
+  done
+
   echo "  installing mason packages (this blocks; a few minutes)..."
   # Registry names, not lspconfig names. Mirrors mason.lua's two lists.
   # Must stay on ONE line: a backslash-newline inside these single quotes is
@@ -281,6 +293,12 @@ check fd     "telescope <leader>fu"
 check magick "image.nvim previews"
 [[ $DO_DOTNET -eq 1 ]] && check dotnet "csharpier, roslyn"
 
+if [[ -f ~/.local/share/nvim/lazy/telescope-fzf-native.nvim/build/libfzf.so ]]; then
+  ok "telescope-fzf-native: libfzf.so built"
+else
+  err "telescope-fzf-native: libfzf.so MISSING — telescope fzf extension fails"; fail=1
+fi
+check mcp-hub "mcphub.nvim throws on startup"
 if [[ -x ~/.local/share/nvim/mason/bin/lua-language-server ]]; then
   n=$(count_dir ~/.local/share/nvim/mason/bin)
   ok "mason: $n binaries installed"
