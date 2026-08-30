@@ -11,6 +11,13 @@
 
 set -euo pipefail
 
+if [[ ${EUID:-$(id -u)} -eq 0 ]]; then
+  echo "Do not run this with sudo. It calls sudo itself where needed;" >&2
+  echo "running as root makes fnm, npm -g and ~/.local/share/nvim" >&2
+  echo "root-owned. Re-run as your normal user:  $0 $*" >&2
+  exit 1
+fi
+
 DO_DOTNET=1
 CHECK_ONLY=0
 for arg in "$@"; do
@@ -83,6 +90,7 @@ APT_PKGS=(
   fzf                  # telescope-fzf-native
   git curl wget unzip  # mason downloaders
   imagemagick          # image.nvim (processor = "magick_cli")
+  luarocks             # image.nvim's build step (magick rock)
   wl-clipboard         # img-clip <leader>p on Wayland
   xclip                # ...and the X11 fallback
 )
@@ -110,7 +118,7 @@ fi
 # Debian ships the binary as `fdfind` (name clash with an older fd package),
 # but telescope/keymaps.lua:60 shells out to plain `fd`.
 step "fd shim"
-mkdir -p ~/.local/bin
+[[ $CHECK_ONLY -eq 1 ]] || mkdir -p ~/.local/bin
 if have fd; then
   ok "fd already resolvable"
 elif [[ $CHECK_ONLY -eq 1 ]]; then
@@ -136,9 +144,18 @@ elif [[ $CHECK_ONLY -eq 1 ]]; then
   warn "would install fnm + Node LTS"
 else
   if ! have fnm; then
-    curl -fsSL https://fnm.vercel.app/install.sh \
-      | bash -s -- --install-dir "$FNM_DIR" --skip-shell
+    # The old fnm.vercel.app/install.sh now 404s. Fetch the release
+    # binary straight from GitHub instead -- one file, no remote script.
+    mkdir -p "$FNM_DIR"
+    tmp="$(mktemp -d)"
+    trap 'rm -rf "$tmp"' RETURN 2>/dev/null || true
+    curl -fsSL -o "$tmp/fnm.zip" \
+      https://github.com/Schniz/fnm/releases/latest/download/fnm-linux.zip
+    unzip -q -o "$tmp/fnm.zip" -d "$tmp"
+    install -m755 "$tmp/fnm" "$FNM_DIR/fnm"
+    rm -rf "$tmp"
     export PATH="$FNM_DIR:$PATH"
+    ok "fnm $("$FNM_DIR/fnm" --version | awk '{print $2}')"
   fi
   eval "$(fnm env --shell bash)"
   fnm install --lts
@@ -161,6 +178,22 @@ fi
 
 # formatting.lua:31 hardcodes ~/.vite-plus/bin/oxfmt. Rather than edit the
 # config, put a binary at that path so it keeps working as written.
+step "tree-sitter CLI"
+# nvim-treesitter's main branch shells out to `tree-sitter` to build each
+# parser. cc alone is not enough -- without this every parser errors with
+# ENOENT: 'tree-sitter'.
+if have tree-sitter; then
+  ok "tree-sitter $(tree-sitter --version 2>/dev/null | awk '{print $2}')"
+elif [[ $CHECK_ONLY -eq 1 ]]; then
+  warn "would npm install -g tree-sitter-cli (no parser builds without it)"
+elif have npm; then
+  npm install -g tree-sitter-cli >/dev/null 2>&1 \
+    && ok "installed tree-sitter CLI" \
+    || err "npm install -g tree-sitter-cli failed"
+else
+  warn "skipped (no npm)"
+fi
+
 step "oxfmt (conform formatter for js/ts/css/html/json/yaml)"
 OXFMT=~/.vite-plus/bin/oxfmt
 if [[ -x $OXFMT ]]; then
@@ -197,11 +230,11 @@ else
 
   echo "  installing mason packages (this blocks; a few minutes)..."
   # Registry names, not lspconfig names. Mirrors mason.lua's two lists.
-  nvim --headless -c 'MasonInstall \
-    html-lsp css-lsp cssmodules-language-server json-lsp lua-language-server \
-    gopls svelte-language-server sqls \
-    oxlint stylua typescript-language-server csharpier roslyn-language-server' \
-    -c 'qa' 2>&1 | tail -20 || warn "some mason packages failed; see :MasonLog"
+  # Must stay on ONE line: a backslash-newline inside these single quotes is
+  # literal, and nvim would take the backslash itself as a package name.
+  MASON_PKGS='html-lsp css-lsp cssmodules-language-server json-lsp lua-language-server gopls svelte-language-server sqls oxlint stylua typescript-language-server csharpier roslyn-language-server'
+  nvim --headless -c "MasonInstall $MASON_PKGS" -c 'qa' 2>&1 | tail -20 \
+    || warn "some mason packages failed; see :MasonLog"
 
   # `Lazy! build` fires treesitter's install() and returns in ~1ms -- the
   # main-branch install() is async, so headless exits before anything
@@ -239,6 +272,7 @@ else
 fi
 check cc     "treesitter parsers cannot compile"
 check make   "telescope-fzf-native cannot build"
+check tree-sitter "treesitter parsers cannot build"
 check go     "gopls, sqls"
 check node   "typescript-tools"
 check npm    "typescript-tools, mason js packages"
