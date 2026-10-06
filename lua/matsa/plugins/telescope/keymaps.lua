@@ -1,6 +1,55 @@
 -- Telescope keymaps
 local M = {}
 
+-- Pickers that list/grep the whole repo can hang or crash nvim on huge repos
+-- if they start the moment they open. They wait for this many characters.
+local MIN_CHARS = 3
+
+-- Wraps a finder factory so the underlying job is only created (and started)
+-- once the prompt reaches MIN_CHARS. The inner finder is created once and then
+-- reused, so a oneshot job still runs a single time and fuzzy-sorts from there.
+local function min_chars_finder(make_finder)
+	local inner
+	return setmetatable({
+		close = function()
+			if inner then
+				inner:close()
+			end
+		end,
+	}, {
+		__index = function(_, key)
+			return inner and inner[key] or nil
+		end,
+		__call = function(_, prompt, process_result, process_complete)
+			if #(prompt or "") < MIN_CHARS then
+				process_complete()
+				return
+			end
+			inner = inner or make_finder()
+			return inner(prompt, process_result, process_complete)
+		end,
+	})
+end
+
+-- File picker backed by a shell command that only runs after MIN_CHARS.
+local function gated_file_picker(title, command)
+	local pickers = require("telescope.pickers")
+	local finders = require("telescope.finders")
+	local conf = require("telescope.config").values
+	local make_entry = require("telescope.make_entry")
+
+	pickers
+		.new({}, {
+			prompt_title = string.format("%s (type %d+ chars)", title, MIN_CHARS),
+			finder = min_chars_finder(function()
+				return finders.new_oneshot_job(command, { entry_maker = make_entry.gen_from_file({}) })
+			end),
+			sorter = conf.file_sorter({}),
+			previewer = conf.file_previewer({}),
+		})
+		:find()
+end
+
 function M.setup()
 	-- Image clearing keymap
 	vim.keymap.set("n", "<leader>ic", function()
@@ -25,12 +74,9 @@ function M.setup()
 	end, { desc = "Clear all images" })
 
 	-- Telescope pickers
-	vim.keymap.set(
-		"n",
-		"<leader>ff",
-		"<cmd>Telescope find_files<cr>",
-		{ desc = "Fuzzy find files cwd (only git files)" }
-	)
+	vim.keymap.set("n", "<leader>ff", function()
+		gated_file_picker("Find Files", { "rg", "--files", "--color", "never" })
+	end, { desc = "Fuzzy find files cwd (only git files)" })
 
 	-- Reverse of <leader>ff: files NOT tracked by git (untracked + gitignored),
 	-- e.g. agent docs (.claude/…) and local dev configs (.env, secrets). We list
@@ -57,54 +103,40 @@ function M.setup()
 			"coverage",
 		}
 
-		local fd = { "fd", "--type", "f", "--hidden", "--no-ignore" }
+		if vim.fn.executable("fd") == 0 then
+			vim.notify("fd is not installed", vim.log.levels.ERROR)
+			return
+		end
+
+		local fd = { "fd", "--type", "f", "--hidden", "--no-ignore", "--color", "never" }
 		for _, e in ipairs(exclude) do
 			table.insert(fd, "--exclude")
 			table.insert(fd, e)
 		end
 
-		local files = vim.fn.systemlist(fd)
-		if vim.v.shell_error ~= 0 then
-			vim.notify("fd failed (is fd installed?)", vim.log.levels.ERROR)
-			return
-		end
-
-		if vim.fn.systemlist({ "git", "rev-parse", "--is-inside-work-tree" })[1] == "true" then
-			local tracked = {}
-			for _, f in ipairs(vim.fn.systemlist({ "git", "ls-files" })) do
-				tracked[f] = true
-			end
-			files = vim.tbl_filter(function(f)
-				return not tracked[f]
-			end, files)
-		end
-
-		if vim.tbl_isempty(files) then
-			vim.notify("No untracked/ignored files found", vim.log.levels.INFO)
-			return
-		end
-
-		local pickers = require("telescope.pickers")
-		local finders = require("telescope.finders")
-		local conf = require("telescope.config").values
-		local make_entry = require("telescope.make_entry")
-
-		pickers
-			.new({}, {
-				prompt_title = "Files not tracked by git",
-				finder = finders.new_table({
-					results = files,
-					entry_maker = make_entry.gen_from_file({}),
-				}),
-				sorter = conf.file_sorter({}),
-				previewer = conf.file_previewer({}),
-			})
-			:find()
+		-- fd output minus git-tracked files, run async once MIN_CHARS is typed.
+		-- Outside a git repo `git ls-files` prints nothing, so everything shows.
+		local fd_cmd = table.concat(vim.tbl_map(vim.fn.shellescape, fd), " ")
+		local script = string.format(
+			"comm -23 <(%s | LC_ALL=C sort) <(git ls-files 2>/dev/null | LC_ALL=C sort)",
+			fd_cmd
+		)
+		gated_file_picker("Files not tracked by git", { "bash", "-c", script })
 	end, { desc = "Fuzzy find files not tracked by git" })
 
 	vim.keymap.set("n", "<leader>fr", "<cmd>Telescope oldfiles<cr>", { desc = "Fuzzy find recent files" })
 
-	vim.keymap.set("n", "<leader>fs", "<cmd>Telescope live_grep<cr>", { desc = "Find string in cwd" })
+	vim.keymap.set("n", "<leader>fs", function()
+		require("telescope.builtin").live_grep({
+			prompt_title = string.format("Live Grep (type %d+ chars)", MIN_CHARS),
+			-- live_grep skips running rg for an empty prompt, so hide short ones.
+			on_input_filter_cb = function(prompt)
+				if #prompt < MIN_CHARS then
+					return { prompt = "" }
+				end
+			end,
+		})
+	end, { desc = "Find string in cwd" })
 
 	vim.keymap.set("n", "<leader>fc", function()
 		local word = vim.fn.expand("<cword>")
