@@ -174,14 +174,12 @@ else
   done
 fi
 
-# ------------------------------------------------------------- 4. oxfmt
+# ---------------------------------------------------- 4. tree-sitter CLI
 
-# formatting.lua:31 hardcodes ~/.vite-plus/bin/oxfmt. Rather than edit the
-# config, put a binary at that path so it keeps working as written.
-step "tree-sitter CLI"
 # nvim-treesitter's main branch shells out to `tree-sitter` to build each
 # parser. cc alone is not enough -- without this every parser errors with
 # ENOENT: 'tree-sitter'.
+step "tree-sitter CLI"
 if have tree-sitter; then
   ok "tree-sitter $(tree-sitter --version 2>/dev/null | awk '{print $2}')"
 elif [[ $CHECK_ONLY -eq 1 ]]; then
@@ -194,6 +192,10 @@ else
   warn "skipped (no npm)"
 fi
 
+# ------------------------------------------------------------- 5. oxfmt
+
+# formatting.lua:31 hardcodes ~/.vite-plus/bin/oxfmt. Rather than edit the
+# config, put a binary at that path so it keeps working as written.
 step "oxfmt (conform formatter for js/ts/css/html/json/yaml)"
 OXFMT=~/.vite-plus/bin/oxfmt
 if [[ -x $OXFMT ]]; then
@@ -216,7 +218,7 @@ else
   warn "skipped (no npm)"
 fi
 
-# ------------------------------------------------------------ 5. neovim
+# ------------------------------------------------------------ 6. neovim
 
 step "Neovim plugins, LSPs and parsers"
 if [[ $CHECK_ONLY -eq 1 ]]; then
@@ -269,7 +271,7 @@ else
   ok "neovim bootstrap done"
 fi
 
-# ------------------------------------------------------------ 6. verify
+# ------------------------------------------------------------ 7. verify
 
 step "Verification"
 fail=0
