@@ -1,4 +1,10 @@
 require("matsa.core.options")
 require("matsa.core.keymaps")
 require("matsa.core.setup")
+require("matsa.core.lsp-on-demand")
 require("matsa.core.lsp-idle")
+require("matsa.core.ts-syntax-errors")
+
+vim.keymap.set("n", "gd", function()
+	require("matsa.core.goto-def").goto_definition()
+end, { desc = "Go to definition (import-aware, no LSP needed)" })
